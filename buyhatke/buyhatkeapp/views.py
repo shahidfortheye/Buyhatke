@@ -11,7 +11,7 @@ import buyhatkeapp.utils as ui_utils
 from datetime import datetime
 from buyhatke.config import db
 # Create your views here.
-
+from .flipkartparser import pass_url
 
 class PublicEndpoint(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -32,23 +32,33 @@ class ParseUrl(APIView):
         data = request.data
         # #call parser
         # data = parser(req)
+        res = None
         if data:
-            db.ParserUrls.insert_one({
-                "url": data.get("url"),
-                "product_id": data.get("product_id"),
-                "product_name":  data.get("product_name"),
-                "reviews":  data.get("reviews"),
-                "ratings":  data.get("ratings"),
-                "parsed_days":  0,
-                "lowest_price": data.get("lowest_price"),
-                "highest_price": data.get("highest_price"),
-                "average_price": data.get("highest_price"),
-                "created_time": datetime.now(),
-                "updated_time": datetime.now(),
-                "lastparsed_date": datetime.now(),
-                "last_price": "",
-                "platform": data.get("platform")})
-        return ui_utils.handle_response(class_name, data=data, success=True)
+            res = pass_url(data)
+            print(res,"kkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+            if res:
+                return ui_utils.handle_response(class_name, data=res, success=True)
+            else:
+                return ui_utils.handle_response(class_name, data="Error while getting the data", success=False)
+        else:
+            return ui_utils.handle_response(class_name, data="provide correct url or product id", success=False)
+
+
+            # db.ParserUrls.insert_one({
+            #     "url": data.get("url"),
+            #     "product_id": data.get("product_id"),
+            #     "product_name":  data.get("product_name"),
+            #     "reviews":  data.get("reviews"),
+            #     "ratings":  data.get("ratings"),
+            #     "parsed_days":  0,
+            #     "lowest_price": data.get("lowest_price"),
+            #     "highest_price": data.get("highest_price"),
+            #     "average_price": data.get("highest_price"),
+            #     "created_time": datetime.now(),
+            #     "updated_time": datetime.now(),
+            #     "lastparsed_date": datetime.now(),
+            #     "last_price": "",
+            #     "platform": data.get("platform")})
 
 
 class AddEmailNotification(APIView):
