@@ -10,7 +10,7 @@ from selenium.webdriver.chrome.options import Options
 import os
 import datetime
 import json
-
+import os
 import requests
 import random
 from bs4 import BeautifulSoup as bs
@@ -62,6 +62,7 @@ class FlipkartScrapper:
         
     def get_driver(self):
         # path = "C:/Users/Shahid.DESKTOP-JH5TIT1/Downloads/chromedriver-win64/chromedriver-win64/chromedriver.exe"
+        os.environ["DISPLAY"] = ":98"
         options = Options()
         # options.add_argument('--headless')
         options.add_argument('--no-sandbox')
