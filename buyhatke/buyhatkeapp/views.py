@@ -30,6 +30,8 @@ class ParseUrl(APIView):
     def post(self, request):
         class_name = self.__class__.__name__
         data = request.data
+        # #call parser
+        # data = parser(req)
         if data:
             db.ParserUrls.insert_one({
                 "url": data.get("url"),
@@ -123,3 +125,44 @@ class AddProductsFromSheet(APIView):
                     print("lknsdjchsj")
         return ui_utils.handle_response(class_name,
                                         data=json_data, success=True)
+
+class UpdateProduct(APIView):
+    def post(self, request):
+        class_name = self.__class__.__name__
+        data = dict(request.data)
+        data = {key: value[0] for key, value in data.items()}
+
+        if data:
+            if data.get("product_id") and data.get("url"):
+                
+                data["datetime"] = datetime.now()
+                update_price(data)
+
+                return ui_utils.handle_response(class_name,
+                                            data="updated", success=True)
+                # except Exception as E:
+                #     return ui_utils.handle_response(class_name,
+                #                                 data="some error" + str(E), success=False)
+            else:
+                return ui_utils.handle_response(class_name,
+                                                data="mssing product id or url", success=False)
+        else:
+            return ui_utils.handle_response(class_name,
+                                            data="mssing product id or url", success=False)
+        
+
+class GetAllUrls(APIView):
+    def get(self, request):
+        # data = ParserUrls.objects.filter()
+        data = list(db.ParserUrls.find({}, {"_id": 0}))
+        # print(data)
+
+        return ui_utils.handle_response({}, data=data, success=True)
+    
+class GetProductChart(APIView):
+    def get(self, request):
+        # data = ParserUrls.objects.filter()
+        data = list(db.price_history.find({"product_id": request.query_params.get("product_id")}, {"_id": 0}))
+        # print(data)
+
+        return ui_utils.handle_response({}, data=data, success=True)
