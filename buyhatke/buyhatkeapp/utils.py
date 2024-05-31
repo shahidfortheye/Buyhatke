@@ -2,7 +2,7 @@ from django.core.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework import status
 from buyhatke.config import db
-from datetime import datetime
+import datetime 
 
 
 
@@ -63,11 +63,11 @@ def get_system_error(exception_object):
         exception_object) if exception_object else ""
 
 def update_price(obj):
+    
     last_price = db.ParserUrls.find_one({"product_id": obj.get("product_id")})
     if last_price:
-        if last_price.get("last_price") and  obj.get("last_price") < last_price.get("last_price"):
+        if last_price.get("last_price") and obj.get("last_price") < last_price.get("last_price"):
             send_notification_to_users(obj)
-            print("yyyyyyyyyyy")
         cond = {}
         cond["product_id"] = last_price["product_id"]
         update = {}
@@ -75,10 +75,13 @@ def update_price(obj):
             update["reviews"] = obj.get("reviews")
         if obj.get("ratings"):
             update["ratings"] = obj.get("ratings")
-        update["lastparsed_date"] = datetime.now()
-        update["average_price"] = (last_price.get("average_price")+ obj.get("last_price"))/(obj.get("parsed_days")+1)
-        update["lowest_price"] = last_price.get("lowest_price") if obj.get("last_price") > last_price.get("lowest_price") else obj.get("last_price")
-        update["highest_price"] = last_price.get("highest_price") if obj.get("last_price") < last_price.get("highest_price") else obj.get("last_price")
+        update["lastparsed_date"] = datetime.datetime.now()
+        try:
+            update["average_price"] = (last_price.get("average_price")+ obj.get("last_price"))/(obj.get("parsed_days")+1)
+            update["lowest_price"] = last_price.get("lowest_price") if obj.get("last_price") > last_price.get("lowest_price") else obj.get("last_price")
+            update["highest_price"] = last_price.get("highest_price") if obj.get("last_price") < last_price.get("highest_price") else obj.get("last_price")
+        except:
+            print("error")
         update["last_price"] = obj.get("last_price")
         update["updated_time"] = obj.get("updated_time")
 
@@ -101,5 +104,5 @@ def add_to_price_history(obj):
             {"product_id":  obj.get("product_id")},
             {"$push": {"data": {"price":
                                 obj.get("price"),
-                                "datetime": obj.get("datetime")}}},
+                                "datetime": str(datetime.date.today())}}},
                                 upsert=True)
