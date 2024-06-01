@@ -64,7 +64,7 @@ class FlipkartScrapper:
         # path = "C:/Users/Shahid.DESKTOP-JH5TIT1/Downloads/chromedriver-win64/chromedriver-win64/chromedriver.exe"
         os.environ["DISPLAY"] = ":99"
         options = Options()
-        options.add_argument('--headless')
+        # options.add_argument('--headless')
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
         options.add_argument("--window-size=1920,1080")
