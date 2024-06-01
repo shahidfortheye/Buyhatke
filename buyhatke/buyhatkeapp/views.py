@@ -5,10 +5,10 @@ import pandas as pd
 from io import StringIO
 
 import json
-from .utils import update_price
+from .utils import update_price,create_otp,send_otp_via_email
 
 import buyhatkeapp.utils as ui_utils
-from datetime import datetime
+from datetime import datetime, timedelta
 from buyhatke.config import db
 # Create your views here.
 from .flipkartparser import pass_url
@@ -169,6 +169,7 @@ class GetAllUrls(APIView):
 
         return ui_utils.handle_response({}, data=data, success=True)
     
+
 class GetProductChart(APIView):
     def get(self, request):
         # data = ParserUrls.objects.filter()
@@ -176,3 +177,37 @@ class GetProductChart(APIView):
         # print(data)
 
         return ui_utils.handle_response({}, data=data, success=True)
+
+class Otp(APIView):
+
+    def get(self, request):
+
+        data = db.price_notification_users.find_one({"email_id": request.query_params.get("email_id"),
+                                            "product_id": request.query_params.get("product_id"),
+                                            "updated_time":{"$gte": datetime.now() - timedelta(minutes=10)}}, {"_id": 0})
+
+        return ui_utils.handle_response({}, data=data, success=True)
+    
+    def post(self, request):
+        data = request.data
+        if data:
+
+            data["otp"] = create_otp()
+            mail_send = send_otp_via_email(data)
+            
+            db.price_notification_users.update_one(
+                {
+                    "product_id": data.get("product_id"),
+                    "email_id": data.get("email_id")},
+                {"$set": {
+                    "created_time": datetime.now(),
+                    "updated_time": datetime.now(),
+                    "last_notification_date": "",
+                    "notification_price":  None,
+                    "status": "InActive",
+                    "otp": data.get("otp"),
+                    "mail_send_status" : mail_send
+                }
+                }, upsert=True)
+            
+            return ui_utils.handle_response({}, data=data, success=True)
