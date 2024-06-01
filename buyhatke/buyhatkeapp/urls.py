@@ -8,6 +8,8 @@ urlpatterns = [
     path(r'update-product/', views.UpdateProduct.as_view()),
     path(r'get-all-urls/', views.GetAllUrls.as_view()),
     path(r'get-product-chart/', views.GetProductChart.as_view()),
+    path(r'otp/', views.Otp.as_view()),
+
 
 
     ]
