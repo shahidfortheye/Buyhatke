@@ -16,7 +16,7 @@ import random
 from bs4 import BeautifulSoup as bs
 import traceback
 from buyhatke.config import db
-
+import shutil
 
 class FlipkartScrapper:
     def __init__(self):
@@ -74,6 +74,8 @@ class FlipkartScrapper:
 
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
         options.add_experimental_option('useAutomationExtension', False)
+        chrome_path = shutil.which('google-chrome')
+        chrome_options.binary_location = chrome_path
         # if self.proxy:
             # proxy_host = "172.17.0.1"
             # proxy_port = "8080"
