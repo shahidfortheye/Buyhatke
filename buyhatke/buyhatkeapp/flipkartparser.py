@@ -75,8 +75,7 @@ class FlipkartScrapper:
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
         options.add_experimental_option('useAutomationExtension', False)
         chrome_path = shutil.which('google-chrome')
-        print(chrome_path)
-        chrome_options.binary_location = chrome_path
+        options.binary_location = chrome_path
         # if self.proxy:
             # proxy_host = "172.17.0.1"
             # proxy_port = "8080"
