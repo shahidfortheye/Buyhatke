@@ -35,6 +35,7 @@ class ParseUrl(APIView):
         # data = parser(req)
         res = None
         if data:
+            print(data)
             res = pass_url(data)
 
             if res:
