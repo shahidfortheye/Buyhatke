@@ -3,7 +3,7 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 
-from webdriver_manager.chrome import ChromeDriverManager
+# from webdriver_manager.chrome import ChromeDriverManager
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -81,8 +81,8 @@ class FlipkartScrapper:
             #     #     # Create proxy string
             # proxy = f"{proxy_host}:{proxy_port}"
         # options.add_argument(f'--proxy-server=http://{proxy}')
-        # driver = webdriver.Chrome(options=options)
-        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+        driver = webdriver.Chrome(options=options)
+        # driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
         return driver
     
     def fetch_html(self, obj):
