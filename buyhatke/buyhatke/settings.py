@@ -114,7 +114,10 @@ else:
 DEFAULT_USER_ID = 1  # make sure a user with this id exists in the db
 DEFAULT_USER_CODE = '0'  # default code for this user is '0'. which means a user with that id has to an admin
 AUTH_USER_MODEL = 'buyhatkeapp.BaseUser'  # refer all references to User model by this name
-
+AWS_ACCESS_KEY_ID = ""
+AWS_SECRET_ACCESS_KEY = ""
+AWS_REGION_NAME = 'ap-south-1'
+SENDER_EMAIL = 'no-reply@headshotgenerator.ai'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
