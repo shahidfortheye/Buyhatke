@@ -24,7 +24,8 @@ class ParseUrl(APIView):
         # data = ParserUrls.objects.filter()
         product_id = request.query_params.get("product_id")
         data = db.ParserUrls.find_one({"product_id": product_id})
-        del data["_id"]
+        if data:
+            del data["_id"]
         return ui_utils.handle_response({}, data=data, success=True)
 
     def post(self, request):
@@ -35,8 +36,9 @@ class ParseUrl(APIView):
         res = None
         if data:
             res = pass_url(data)
-            print(res,"kkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+
             if res:
+                del res["_id"]
                 return ui_utils.handle_response(class_name, data=res, success=True)
             else:
                 return ui_utils.handle_response(class_name, data="Error while getting the data", success=False)
