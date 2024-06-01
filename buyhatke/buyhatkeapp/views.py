@@ -184,7 +184,7 @@ class Otp(APIView):
 
     def get(self, request):
 
-        data = db.price_notification_users.find_one({"email_id": request.query_params.get("email_id"),
+        data = db.price_notification_users.find_one({"email_id": request.query_params.get("email_id"),"otp": str(request.query_params.get("otp")),
                                             "product_id": request.query_params.get("product_id"),
                                             "updated_time":{"$gte": datetime.now() - timedelta(minutes=10)}}, {"_id": 0})
 
