@@ -85,7 +85,36 @@ class FlipkartScrapper:
         # options.add_argument(f'--proxy-server=http://{proxy}')
         driver = webdriver.Chrome(options=options)
         # driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-        return driver
+        try:
+            # Open Chrome settings page
+            driver.get('chrome://settings/clearBrowserData')
+    
+            # Wait for the settings to load
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//settings-ui")))
+    
+            # Click on "Advanced" to reveal more options
+            driver.find_element(By.XPATH, "//settings-ui//button[contains(text(), 'Advanced')]").click()
+    
+            # Wait for the advanced settings to expand
+            WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, "//settings-ui//settings-section[@role='tabpanel']")))
+    
+            # Select the time range for which to clear the data (e.g., "Last hour")
+            driver.find_element(By.XPATH, "//settings-ui//settings-section[@role='tabpanel']//select").click()
+            driver.find_element(By.XPATH, "//settings-ui//settings-section[@role='tabpanel']//select/option[text()='Last hour']").click()
+    
+            # Check the checkboxes for the types of data to clear (e.g., "Browsing history", "Cookies and other site data", "Cached images and files")
+            checkboxes = driver.find_elements(By.XPATH, "//settings-ui//settings-section[@role='tabpanel']//cr-checkbox")
+            for checkbox in checkboxes:
+                checkbox.click()
+    
+            # Click on the "Clear data" button
+            driver.find_element(By.XPATH, "//settings-ui//settings-section[@role='tabpanel']//button[contains(text(), 'Clear data')]").click()
+    
+            print("Cache and browsing history cleared successfully.")
+            return driver
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return driver
     
     def fetch_html(self, obj):
         html = None
