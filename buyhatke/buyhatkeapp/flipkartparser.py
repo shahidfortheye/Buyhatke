@@ -65,30 +65,38 @@ class FlipkartScrapper:
         
     def get_driver(self):
         options = Options()
-        # options.add_argument('--headless')
+        options.add_argument('--headless')
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
-        options.add_argument("--window-size=1920,1080")
-        options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36")
-        options.add_argument("--ignore-certificate-errors")
-        options.add_argument("--disable-gpu")
-        options.add_argument("--disable-software-rasterizer")
-        options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        options.add_argument('--disable-gpu')
+        options.add_argument('--window-size=1920,1080')
+        options.add_argument('--disable-software-rasterizer')
+        options.add_argument('--remote-debugging-port=9222')
+        options.add_argument('start-maximized')
+        options.add_argument('enable-automation')
+        options.add_argument('--disable-infobars')
+        options.add_argument('--disable-browser-side-navigation')
+        options.add_argument('--disable-extensions')
+        options.add_argument('--disable-notifications')
+        options.add_argument('--disable-default-apps')
+        options.add_argument('--disable-blink-features=AutomationControlled')
+        options.add_argument('--disable-logging')
+        options.add_argument('--log-level=3')
+        options.add_argument('--single-process')
+        options.add_experimental_option('excludeSwitches', ['enable-automation'])
         options.add_experimental_option('useAutomationExtension', False)
-        
-        chrome_path = shutil.which('google-chrome')
-        if chrome_path:
-            options.binary_location = chrome_path
-        else:
-            raise FileNotFoundError("Google Chrome binary not found. Make sure Chrome is installed.")
+
+        # Use the confirmed chrome binary location
+        options.binary_location = '/usr/bin/google-chrome'
 
         try:
             driver = webdriver.Chrome(options=options)
-            print(driver)
         except Exception as e:
             print("Error starting ChromeDriver:", e)
             traceback.print_exc()
             driver = None
+        
+        return driver
     
     def fetch_html(self, obj):
         html = None
