@@ -39,7 +39,8 @@ class ParseUrl(APIView):
             res = pass_url(data)
 
             if res:
-                # del res["_id"]
+                if res.get("_id")
+                    del res["_id"]
                 return ui_utils.handle_response(class_name, data=res, success=True)
             else:
                 return ui_utils.handle_response(class_name, data="Error while getting the data", success=False)
