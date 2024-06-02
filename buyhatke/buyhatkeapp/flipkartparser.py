@@ -58,7 +58,10 @@ class FlipkartScrapper:
         return proxies
     
     def driver_quit(self):
-        self.driver.quit()
+        if self.driver:
+            self.driver.quit()
+        else:
+            print("NO Driver Found")
         
     def get_driver(self):
         options = Options()
