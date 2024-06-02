@@ -61,60 +61,30 @@ class FlipkartScrapper:
         self.driver.quit()
         
     def get_driver(self):
-        # path = "C:/Users/Shahid.DESKTOP-JH5TIT1/Downloads/chromedriver-win64/chromedriver-win64/chromedriver.exe"
-        # os.environ["DISPLAY"] = ":99"
         options = Options()
-        # options.add_argument('--headless')
+        options.add_argument('--headless')
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
         options.add_argument("--window-size=1920,1080")
-
         options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36")
-        # options.add_argument("--ignore-certificate-errors")
+        options.add_argument("--ignore-certificate-errors")
+        options.add_argument("--disable-gpu")
+        options.add_argument("--disable-software-rasterizer")
+        options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        options.add_experimental_option('useAutomationExtension', False)
+        
+        chrome_path = shutil.which('google-chrome')
+        if chrome_path:
+            options.binary_location = chrome_path
+        else:
+            raise FileNotFoundError("Google Chrome binary not found. Make sure Chrome is installed.")
 
-        # options.add_experimental_option("excludeSwitches", ["enable-automation"])
-        # options.add_experimental_option('useAutomationExtension', False)
-        # chrome_path = shutil.which('google-chrome')
-        # options.binary_location = chrome_path
-        # if self.proxy:
-            # proxy_host = "172.17.0.1"
-            # proxy_port = "8080"
-            
-            #     #     # Create proxy string
-            # proxy = f"{proxy_host}:{proxy_port}"
-        # options.add_argument(f'--proxy-server=http://{proxy}')
-        # driver = webdriver.Chrome(options=options)
-        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-        # try:
-            # Open Chrome settings page
-        #     driver.get('chrome://settings/clearBrowserData')
-    
-        #     # Wait for the settings to load
-        #     WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//settings-ui")))
-    
-        #     # Click on "Advanced" to reveal more options
-        #     driver.find_element(By.XPATH, "//settings-ui//button[contains(text(), 'Advanced')]").click()
-    
-        #     # Wait for the advanced settings to expand
-        #     WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, "//settings-ui//settings-section[@role='tabpanel']")))
-    
-        #     # Select the time range for which to clear the data (e.g., "Last hour")
-        #     driver.find_element(By.XPATH, "//settings-ui//settings-section[@role='tabpanel']//select").click()
-        #     driver.find_element(By.XPATH, "//settings-ui//settings-section[@role='tabpanel']//select/option[text()='Last hour']").click()
-    
-        #     # Check the checkboxes for the types of data to clear (e.g., "Browsing history", "Cookies and other site data", "Cached images and files")
-        #     checkboxes = driver.find_elements(By.XPATH, "//settings-ui//settings-section[@role='tabpanel']//cr-checkbox")
-        #     for checkbox in checkboxes:
-        #         checkbox.click()
-    
-        #     # Click on the "Clear data" button
-        #     driver.find_element(By.XPATH, "//settings-ui//settings-section[@role='tabpanel']//button[contains(text(), 'Clear data')]").click()
-    
-        #     print("Cache and browsing history cleared successfully.")
-        #     return driver
-        # except Exception as e:
-        #     print(f"An error occurred: {e}")
-        return driver
+        try:
+            driver = webdriver.Chrome(options=options)
+        except WebDriverException as e:
+            print("Error starting ChromeDriver:", e)
+            traceback.print_exc()
+            driver = None
     
     def fetch_html(self, obj):
         html = None
