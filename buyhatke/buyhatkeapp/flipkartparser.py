@@ -3,7 +3,7 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 
-# from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.chrome import ChromeDriverManager
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -62,7 +62,7 @@ class FlipkartScrapper:
         
     def get_driver(self):
         # path = "C:/Users/Shahid.DESKTOP-JH5TIT1/Downloads/chromedriver-win64/chromedriver-win64/chromedriver.exe"
-        os.environ["DISPLAY"] = ":99"
+        # os.environ["DISPLAY"] = ":99"
         options = Options()
         # options.add_argument('--headless')
         options.add_argument('--no-sandbox')
@@ -70,12 +70,12 @@ class FlipkartScrapper:
         options.add_argument("--window-size=1920,1080")
 
         options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36")
-        options.add_argument("--ignore-certificate-errors")
+        # options.add_argument("--ignore-certificate-errors")
 
-        options.add_experimental_option("excludeSwitches", ["enable-automation"])
-        options.add_experimental_option('useAutomationExtension', False)
-        chrome_path = shutil.which('google-chrome')
-        options.binary_location = chrome_path
+        # options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        # options.add_experimental_option('useAutomationExtension', False)
+        # chrome_path = shutil.which('google-chrome')
+        # options.binary_location = chrome_path
         # if self.proxy:
             # proxy_host = "172.17.0.1"
             # proxy_port = "8080"
@@ -83,8 +83,8 @@ class FlipkartScrapper:
             #     #     # Create proxy string
             # proxy = f"{proxy_host}:{proxy_port}"
         # options.add_argument(f'--proxy-server=http://{proxy}')
-        driver = webdriver.Chrome(options=options)
-        # driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+        # driver = webdriver.Chrome(options=options)
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
         # try:
             # Open Chrome settings page
         #     driver.get('chrome://settings/clearBrowserData')
