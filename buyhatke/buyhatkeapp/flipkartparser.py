@@ -91,7 +91,8 @@ class FlipkartScrapper:
 
         try:
             driver = webdriver.Chrome(options=options)
-            driver.set_page_load_timeout(60)
+            driver.set_page_load_timeout(120)
+            driver.set_script_timeout(120)
         except Exception as e:
             print("Error starting ChromeDriver:", e)
             traceback.print_exc()
