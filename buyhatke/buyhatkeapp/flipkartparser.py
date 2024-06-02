@@ -64,40 +64,29 @@ class FlipkartScrapper:
             print("NO Driver Found")
         
     def get_driver(self):
+        # path = "C:/Users/Shahid.DESKTOP-JH5TIT1/Downloads/chromedriver-win64/chromedriver-win64/chromedriver.exe"
+        os.environ["DISPLAY"] = ":99"
         options = Options()
         # options.add_argument('--headless')
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
-        options.add_argument('--disable-gpu')
-        options.add_argument('--window-size=1920,1080')
-        options.add_argument('--disable-software-rasterizer')
-        options.add_argument('--remote-debugging-port=9222')
-        options.add_argument('start-maximized')
-        options.add_argument('enable-automation')
-        options.add_argument('--disable-infobars')
-        options.add_argument('--disable-browser-side-navigation')
-        options.add_argument('--disable-extensions')
-        options.add_argument('--disable-notifications')
-        options.add_argument('--disable-default-apps')
-        options.add_argument('--disable-blink-features=AutomationControlled')
-        options.add_argument('--disable-logging')
-        options.add_argument('--log-level=3')
-        options.add_argument('--single-process')
-        options.add_experimental_option('excludeSwitches', ['enable-automation'])
+        options.add_argument("--window-size=1920,1080")
+
+        options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36")
+        options.add_argument("--ignore-certificate-errors")
+
+        options.add_experimental_option("excludeSwitches", ["enable-automation"])
         options.add_experimental_option('useAutomationExtension', False)
-
-        # Use the confirmed chrome binary location
-        options.binary_location = '/usr/bin/google-chrome'
-
-        try:
-            driver = webdriver.Chrome(options=options)
-            driver.set_page_load_timeout(120)
-            driver.set_script_timeout(120)
-        except Exception as e:
-            print("Error starting ChromeDriver:", e)
-            traceback.print_exc()
-            driver = None
+        # if self.proxy:
+        proxy_host = "172.17.0.1"
+        proxy_port = "8080"
         
+        #     #     # Create proxy string
+        proxy = f"{proxy_host}:{proxy_port}"
+        # options.add_argument(f'--proxy-server=http://{proxy}')
+        driver = webdriver.Chrome(options=options)
+        # driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+        print(driver)
         return driver
     
     def fetch_html(self, obj):
