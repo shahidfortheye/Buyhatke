@@ -102,7 +102,7 @@ class FlipkartScrapper:
 
             self.driver.get(obj.get("url"))
             html = self.driver.page_source
-            print(html,"ppppppppppppppppppppppppppppssssssssssssssssssssssssssssssssssssss")
+            # print(html,"ppppppppppppppppppppppppppppssssssssssssssssssssssssssssssssssssss")
         except:
             print("EROOOOOOOOOOOOOOr")
         
