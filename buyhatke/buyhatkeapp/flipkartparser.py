@@ -85,7 +85,7 @@ class FlipkartScrapper:
         try:
             driver = webdriver.Chrome(options=options)
             print(driver)
-        except WebDriverException as e:
+        except Exception as e:
             print("Error starting ChromeDriver:", e)
             traceback.print_exc()
             driver = None
