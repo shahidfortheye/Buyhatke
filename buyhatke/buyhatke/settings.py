@@ -39,12 +39,13 @@ SECRET_KEY = 'django-insecure-%956_-)kobm5+i26s*h@8$+2gz3+x%il%0h9p4pze89%ovg5sf
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1","fbdc-121-240-3-154.ngrok-free.app","localhost","15.207.107.16"]
+ALLOWED_HOSTS = ["127.0.0.1","fbdc-121-240-3-154.ngrok-free.app","localhost","15.207.107.16","65.0.104.5"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'django_crontab',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -53,7 +54,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'buyhatkeapp',
     'djongo',
-'corsheaders',
+    'corsheaders',
+    
 ]
 
 MIDDLEWARE = [
@@ -197,3 +199,8 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=60),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
+
+
+CRONJOBS = [
+    ('0 0 * * *', 'buyhatkeapp.cronjob.scrapper')
+]
