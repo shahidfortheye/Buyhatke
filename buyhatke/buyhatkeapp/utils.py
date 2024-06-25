@@ -68,7 +68,7 @@ def get_system_error(exception_object):
         exception_object) if exception_object else ""
 
 def update_price(obj):
-    
+    obj["datetime"] = datetime.datetime.now()
     last_price = db.ParserUrls.find_one({"product_id": obj.get("product_id")})
     if last_price:
         if last_price.get("last_price") and obj.get("last_price") < last_price.get("last_price"):

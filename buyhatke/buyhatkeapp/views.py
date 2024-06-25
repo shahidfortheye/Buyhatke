@@ -3,7 +3,7 @@ from rest_framework import permissions
 import requests
 import pandas as pd
 from io import StringIO
-
+from .cronjob import FlipkartScrapper
 import json
 from .utils import update_price,create_otp,send_otp_via_email
 
@@ -215,3 +215,30 @@ class Otp(APIView):
                 }, upsert=True)
             
             return ui_utils.handle_response({}, data=data, success=True)
+
+class TrendingProducts(APIView):
+    def get(self, request):
+        # data = ParserUrls.objects.filter()
+        data = db.ParserUrls.find({"trending_product": 1},{"_id":0})
+        return ui_utils.handle_response({}, data=data, success=True)
+
+class TopDeals(APIView):
+
+    def get(self, request):
+        # data = ParserUrls.objects.filter()
+        data = db.ParserUrls.find({},{"_id":0})
+        return ui_utils.handle_response({}, data=data, success=True)
+    
+class Cron(APIView):
+    def get(self, request):
+        urls = db.ParserUrls.find({},{"_id":0})
+        obj1 = FlipkartScrapper()
+
+        data = []
+        for i in urls:
+            result= obj1.fetch_html(i)
+            if result:
+                data.append(result)
+                req = update_price(result)
+                req.update_data()
+        obj1.driver_quit()
