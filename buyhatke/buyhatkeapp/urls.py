@@ -9,6 +9,10 @@ urlpatterns = [
     path(r'get-all-urls/', views.GetAllUrls.as_view()),
     path(r'get-product-chart/', views.GetProductChart.as_view()),
     path(r'otp/', views.Otp.as_view()),
+    path(r'get-trending-products/', views.TrendingProducts.as_view()),
+    path(r'top-deals/', views.TopDeals.as_view()),
+    path(r'cron/', views.Cron.as_view()),
+
 
 
 
