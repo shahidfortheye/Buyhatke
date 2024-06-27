@@ -219,14 +219,14 @@ class Otp(APIView):
 class TrendingProducts(APIView):
     def get(self, request):
         # data = ParserUrls.objects.filter()
-        data = db.ParserUrls.find({"trending_product": 1},{"_id":0})
+        data = list(db.ParserUrls.find({"trending_product": 1},{"_id":0}))
         return ui_utils.handle_response({}, data=data, success=True)
 
 class TopDeals(APIView):
 
     def get(self, request):
         # data = ParserUrls.objects.filter()
-        data = db.ParserUrls.find({},{"_id":0})
+        data = list(db.ParserUrls.find({},{"_id":0}))
         return ui_utils.handle_response({}, data=data, success=True)
     
 class Cron(APIView):
