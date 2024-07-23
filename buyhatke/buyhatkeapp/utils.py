@@ -188,7 +188,7 @@ def send_otp_via_email(data):
 
 
 def pass_url(obj):
-
+    result = None
     if obj.get("platform") == "flipkart":
         obj1 = FlipkartScrapper()
         result = obj1.fetch_html(obj)
