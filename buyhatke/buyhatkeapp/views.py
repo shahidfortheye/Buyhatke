@@ -4,6 +4,8 @@ import requests
 import pandas as pd
 from io import StringIO
 from .cronjob import FlipkartScrapper
+from .amazonparse import AmazonParser
+
 import json
 from .utils import update_price,create_otp,send_otp_via_email
 
@@ -11,7 +13,7 @@ import buyhatkeapp.utils as ui_utils
 from datetime import datetime, timedelta
 from buyhatke.config import db
 # Create your views here.
-from .flipkartparser import pass_url
+from .utils import pass_url
 
 class PublicEndpoint(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -35,7 +37,7 @@ class ParseUrl(APIView):
         # data = parser(req)
         res = None
         if data:
-            print(data)
+            # print(data)
             res = pass_url(data)
 
             if res:
@@ -232,6 +234,7 @@ class TopDeals(APIView):
 class Cron(APIView):
     def get(self, request):
         urls = db.ParserUrls.find({},{"_id":0})
+        
         obj1 = FlipkartScrapper()
 
         data = []
@@ -242,3 +245,10 @@ class Cron(APIView):
                 req = update_price(result)
                 req.update_data()
         obj1.driver_quit()
+
+class amazonparser(APIView):
+    def get(self, request):
+        obj1 = AmazonParser()
+        # captcha = obj1.fetch_captcha_page()
+        product = obj1.search_product(data={"product_id": "pppppppp"})
+        return ui_utils.handle_response({}, data=product, success=True)

@@ -9,6 +9,9 @@ import boto3
 from  buyhatke import settings as SETTINGS
 # from .flipkartparser import pass_url
 
+from .flipkartparser import FlipkartScrapper
+from .amazonparse import AmazonParser
+
 
 
 def handle_response(object_name, data=None, headers=None, content_type=None, exception_object=None, success=False, request=None):
@@ -183,3 +186,142 @@ def send_otp_via_email(data):
         print(f"Error sending email: {e}")
         return False
 
+
+def pass_url(obj):
+
+    if obj.get("platform") == "flipkart":
+        obj1 = FlipkartScrapper()
+        result = obj1.fetch_html(obj)
+
+    elif obj.get("platform") == "amazon":
+        obj1 = AmazonParser()
+
+        result = obj1.search_product(obj)
+        if not result.get("title"):
+            obj1.fetch_captcha_page()
+            result = obj1.search_product(obj)
+    data = []
+    if result:
+        data.append(result)
+        req = UpdateDatatoMongo(result)
+        req.update_data()
+        return result
+    else:
+        None
+    obj1.driver_quit()
+
+
+class UpdateDatatoMongo:
+    def __init__(self, data):
+        self.data = data
+
+    def update_data(self):
+
+        # URL of the API endpoint
+        self.data["datetime"] = datetime.datetime.now()
+        update_price(self.data)
+
+
+def update_price(obj):
+
+    last_price = db.ParserUrls.find_one({"product_id": obj.get("product_id")})
+    if last_price:
+        if last_price.get("last_price") and obj.get("last_price") < last_price.get("last_price"):
+            send_notification_to_users(obj)
+        cond = {}
+        cond["product_id"] = last_price["product_id"]
+        update = {}
+        if obj.get("reviews"):
+            update["reviews"] = obj.get("reviews")
+        if obj.get("ratings"):
+            update["ratings"] = obj.get("ratings")
+        update["lastparsed_date"] = datetime.datetime.now()
+        # try:
+        #     update["average_price"] = (last_price.get("average_price")+ obj.get("last_price"))/(obj.get("parsed_days")+1)
+        #     update["lowest_price"] = last_price.get("lowest_price") if obj.get("last_price") > last_price.get("lowest_price") else obj.get("last_price")
+        #     update["highest_price"] = last_price.get("highest_price") if obj.get("last_price") < last_price.get("highest_price") else obj.get("last_price")
+        # except:
+        #     print("error")
+        update["last_price"] = obj.get("last_price")
+        update["updated_time"] = obj.get("updated_time")
+
+        db.ParserUrls.update_one(cond, {"$set": update})
+    else:
+        db.ParserUrls.insert_one(obj)
+    add_to_price_history(obj)
+
+
+def send_notification_to_users(obj):
+    users = db.price_notification_users.find(
+        {"product_id": obj.get("product_id"),"notification_price": {"$gte":obj.get("last_price")}})
+    for i in users:
+        send_pricedrop_email(obj)
+
+
+def add_to_price_history(obj):
+    
+    db.price_history.update_one(
+            {"product_id":  obj.get("product_id")},
+            {"$push": {"data": {"price":
+                                obj.get("price"),
+                                "datetime": str(datetime.date.today())}}},
+                                upsert=True)
+
+
+
+
+def send_pricedrop_email(data):
+    """
+    Send an OTP via email using AWS SES.
+    
+    :param recipient_email: The email address of the recipient.
+    :param otp: The OTP to be sent.
+    :param sender_email: The email address of the sender (must be verified in SES).
+    :param aws_region: The AWS region where SES is set up.
+    """
+    # Create a new SES resource
+    client = boto3.client('ses', region_name= SETTINGS.AWS_REGION_NAME)
+    
+    # The email subject and body
+    subject = str("Price Drop Alert")
+    body_text = "Your product has a price drop!"
+    body_html = f"""
+            <html>
+            <head></head>
+            <body>
+            <h1>Price Drop!</h1>
+            <p>Your product has a price drop!\n Current Price:{data.get("last_price")},\nProduct name:{data.get("title")}</strong></p>
+            </body>
+            </html>
+            """
+    
+    # Try to send the email
+    try:
+        response = client.send_email(
+            Source = SETTINGS.SENDER_EMAIL,
+            Destination={
+                'ToAddresses': [
+                    data.get("email_id"),
+                ]
+            },
+            Message={
+                'Subject': {
+                    'Data': subject,
+                    'Charset': 'UTF-8'
+                },
+                'Body': {
+                    'Text': {
+                        'Data': body_text,
+                        'Charset': 'UTF-8'
+                    },
+                    'Html': {
+                        'Data': body_html,
+                        'Charset': 'UTF-8'
+                    }
+                }
+            }
+        )
+        return True
+    except Exception as e:
+        print(f"Error sending email: {e}")
+        return False

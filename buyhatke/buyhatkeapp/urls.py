@@ -12,6 +12,8 @@ urlpatterns = [
     path(r'get-trending-products/', views.TrendingProducts.as_view()),
     path(r'top-deals/', views.TopDeals.as_view()),
     path(r'cron/', views.Cron.as_view()),
+    path(r'amazonparser/', views.amazonparser.as_view()),
+
 
 
 
