@@ -195,9 +195,9 @@ def pass_url(obj):
 
     elif obj.get("platform") == "amazon":
         obj1 = AmazonParser()
-
-        result = obj1.search_product(obj)
-        if not result.get("title"):
+        try:
+            result = obj1.search_product(obj)
+        except:
             obj1.fetch_captcha_page()
             result = obj1.search_product(obj)
     data = []
